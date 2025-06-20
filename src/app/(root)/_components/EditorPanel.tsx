@@ -1,20 +1,24 @@
 "use client";
-import { useCodeEditorStore } from "@/store/useCodeEditorStore";
+import { useCodeEditorStore, getExecutionResult } from "@/store/useCodeEditorStore";
 import { useEffect, useState } from "react";
 import { defineMonacoThemes, LANGUAGE_CONFIG } from "../_constants";
 import { Editor } from "@monaco-editor/react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { RotateCcwIcon, ShareIcon, TypeIcon } from "lucide-react";
-import { useClerk } from "@clerk/nextjs";
+import { useClerk, useUser } from "@clerk/nextjs";
 import { EditorPanelSkeleton } from "./EditorPanelSkeleton";
 import useMounted from "@/hooks/useMounted";
 import ShareSnippetDialog from "./ShareSnippetDialog";
+import { useMutation } from "convex/react";
+import { api } from "../../../../convex/_generated/api";
 
 function EditorPanel() {
   const clerk = useClerk();
+  const { user } = useUser();
   const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
-  const { language, theme, fontSize, editor, setFontSize, setEditor } = useCodeEditorStore();
+  const { language, theme, fontSize, editor, setFontSize, setEditor, runCode, isRunning } = useCodeEditorStore();
+  const saveExecution = useMutation(api.codeExecutions.saveExecution);
 
   const mounted = useMounted();
 
@@ -28,6 +32,37 @@ function EditorPanel() {
     const savedFontSize = localStorage.getItem("editor-font-size");
     if (savedFontSize) setFontSize(parseInt(savedFontSize));
   }, [setFontSize]);
+
+  // Add keyboard shortcut for running code
+  useEffect(() => {
+    const handleKeyDown = async (event: KeyboardEvent) => {
+      if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') {
+        event.preventDefault();
+        if (!isRunning) {
+          await handleRunCode();
+        }
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isRunning]);
+
+  const handleRunCode = async () => {
+    await runCode();
+    const result = getExecutionResult();
+
+    if (user && result) {
+      await saveExecution({
+        language,
+        code: result.code,
+        output: result.output || undefined,
+        error: result.error || undefined,
+      });
+    }
+  };
 
   const handleRefresh = () => {
     const defaultCode = LANGUAGE_CONFIG[language].defaultCode;
