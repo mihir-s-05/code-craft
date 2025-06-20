@@ -1,5 +1,5 @@
 import NavigationHeader from "@/components/NavigationHeader";
-import { Mail, MessageCircle, Book, HelpCircle, Clock, ExternalLink } from "lucide-react";
+import { Mail, MessageCircle, HelpCircle, Clock, ExternalLink } from "lucide-react";
 
 export default function SupportPage() {
   return (
@@ -76,7 +76,7 @@ export default function SupportPage() {
               <div className="space-y-6">
                 <div className="border-b border-gray-800/50 pb-6">
                   <h3 className="text-lg font-medium text-white mb-2">How do I run my code?</h3>
-                  <p className="text-gray-400">Simply click the "Run" button or use Ctrl+Enter (Cmd+Enter on Mac) to execute your code. Make sure you&apos;ve selected the correct language.</p>
+                  <p className="text-gray-400">Simply click the &quot;Run&quot; button or use Ctrl+Enter (Cmd+Enter on Mac) to execute your code. Make sure you&apos;ve selected the correct language.</p>
                 </div>
 
                 <div className="border-b border-gray-800/50 pb-6">
@@ -96,7 +96,7 @@ export default function SupportPage() {
 
                 <div>
                   <h3 className="text-lg font-medium text-white mb-2">How do I upgrade to Pro?</h3>
-                  <p className="text-gray-400">Visit our pricing page and click "Upgrade to Pro". You&apos;ll get instant access to all Pro features with a one-time payment.</p>
+                  <p className="text-gray-400">Visit our pricing page and click &quot;Upgrade to Pro&quot;. You&apos;ll get instant access to all Pro features with a one-time payment.</p>
                 </div>
               </div>
             </div>
