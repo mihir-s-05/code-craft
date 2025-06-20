@@ -42,7 +42,7 @@ export default function PrivacyPage() {
                   <Eye className="w-6 h-6 text-blue-400" />
                 </div>
                 <h3 className="text-lg font-medium text-white mb-2">Transparency</h3>
-                <p className="text-gray-400">We're clear about what data we collect and why.</p>
+                <p className="text-gray-400">We&apos;re clear about what data we collect and why.</p>
               </div>
             </div>
 

@@ -17,7 +17,7 @@ export default function SupportPage() {
               </h1>
             </div>
             <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-              Get help with CodeCraft. We're here to assist you with any questions or issues.
+              Get help with CodeCraft. We&apos;re here to assist you with any questions or issues.
             </p>
           </div>
 
@@ -30,7 +30,7 @@ export default function SupportPage() {
                   <Mail className="w-6 h-6 text-blue-400" />
                 </div>
                 <h3 className="text-lg font-medium text-white mb-2">Email Support</h3>
-                <p className="text-gray-400 mb-4">Send us an email and we'll get back to you within 24 hours.</p>
+                <p className="text-gray-400 mb-4">Send us an email and we&apos;ll get back to you within 24 hours.</p>
                 <a 
                   href="mailto:support@codecraft.dev" 
                   className="inline-flex items-center gap-2 text-blue-400 hover:text-blue-300 transition-colors"
@@ -76,7 +76,7 @@ export default function SupportPage() {
               <div className="space-y-6">
                 <div className="border-b border-gray-800/50 pb-6">
                   <h3 className="text-lg font-medium text-white mb-2">How do I run my code?</h3>
-                  <p className="text-gray-400">Simply click the "Run" button or use Ctrl+Enter (Cmd+Enter on Mac) to execute your code. Make sure you've selected the correct language.</p>
+                  <p className="text-gray-400">Simply click the "Run" button or use Ctrl+Enter (Cmd+Enter on Mac) to execute your code. Make sure you&apos;ve selected the correct language.</p>
                 </div>
 
                 <div className="border-b border-gray-800/50 pb-6">
@@ -86,17 +86,17 @@ export default function SupportPage() {
 
                 <div className="border-b border-gray-800/50 pb-6">
                   <h3 className="text-lg font-medium text-white mb-2">What programming languages are supported?</h3>
-                  <p className="text-gray-400">We support JavaScript, TypeScript, Python, Java, C++, Go, Rust, and many more. New languages are added regularly.</p>
+                  <p className="text-gray-400">We support JavaScript, TypeScript, Python, Java, C++, Go, Rust, and many more.</p>
                 </div>
 
                 <div className="border-b border-gray-800/50 pb-6">
                   <h3 className="text-lg font-medium text-white mb-2">Is there a mobile app?</h3>
-                  <p className="text-gray-400">CodeCraft is fully responsive and works great on mobile browsers. A dedicated mobile app is in development.</p>
+                  <p className="text-gray-400">CodeCraft is fully responsive and works great on mobile browsers.</p>
                 </div>
 
                 <div>
                   <h3 className="text-lg font-medium text-white mb-2">How do I upgrade to Pro?</h3>
-                  <p className="text-gray-400">Visit our pricing page and click "Upgrade to Pro". You'll get instant access to all Pro features with a one-time payment.</p>
+                  <p className="text-gray-400">Visit our pricing page and click "Upgrade to Pro". You&apos;ll get instant access to all Pro features with a one-time payment.</p>
                 </div>
               </div>
             </div>
