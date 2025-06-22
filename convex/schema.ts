@@ -42,4 +42,14 @@ export default defineSchema({
     .index("by_user_id", ["userId"])
     .index("by_snippet_id", ["snippetId"])
     .index("by_user_id_and_snippet_id", ["userId", "snippetId"]),
+
+    projects: defineTable({
+        userId: v.string(),
+        name: v.string(),
+        language: v.string(),
+        files: v.array(v.object({
+            name: v.string(),
+            content: v.string(),
+        })),
+    }).index("by_user_id", ["userId"]),
 });

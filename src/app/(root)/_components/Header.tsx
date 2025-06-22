@@ -8,6 +8,7 @@ import ThemeSelector from "./ThemeSelector";
 import LanguageSelector from "./LanguageSelector";
 import RunButton from "./RunButton";
 import HeaderProfileBtn from "./HeaderProfileBtn";
+import CreateProjectButton from "./CreateProjectButton";
 
 
 async function Header() {
@@ -94,6 +95,7 @@ async function Header() {
           )}
 
           <SignedIn>
+            {convexUser?.isPro && <CreateProjectButton />}
             <RunButton />
           </SignedIn>
 
