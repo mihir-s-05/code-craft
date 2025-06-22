@@ -24,6 +24,7 @@
 - **Access to premium languages** (Pro subscription required for non-JavaScript languages)
 - **Enhanced collaboration features**
 - **Priority support**
+- **Create multi-file projects**
 
 ### 🌐 **Modern UI/UX**
 - **Beautiful dark theme** with blue/purple gradients

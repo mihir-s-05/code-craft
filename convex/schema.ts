@@ -28,6 +28,17 @@ export default defineSchema({
         userName: v.string(), // store user's name for easy access
     }).index("by_user_id", ["userId"]),
 
+    projects: defineTable({
+        userId: v.string(),
+        title: v.string(),
+        language: v.string(),
+        files: v.array(v.object({
+            name: v.string(),
+            content: v.string(),
+        })),
+        userName: v.string(),
+    }).index("by_user_id", ["userId"]),
+
     snippetComments: defineTable({
         snippetId: v.id("snippets"),
         userId: v.string(),

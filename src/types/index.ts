@@ -64,3 +64,18 @@ export interface Snippet {
   title: string;
   userName: string;
 }
+
+export interface ProjectFile {
+  name: string;
+  content: string;
+}
+
+export interface Project {
+  _id: Id<"projects">;
+  _creationTime: number;
+  userId: string;
+  language: string;
+  title: string;
+  files: ProjectFile[];
+  userName: string;
+}

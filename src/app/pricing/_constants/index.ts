@@ -29,6 +29,7 @@ export const FEATURES = {
     "Custom theme builder",
     "Integrated debugging tools",
     "Multi-language support",
+    "Create multi-file projects",
   ],
   collaboration: [
     "Real-time pair programming",

@@ -55,11 +55,11 @@ async function Header() {
           <nav className="flex items-center space-x-1">
             <Link
               href="/snippets"
-              className="relative group flex items-center gap-2 px-4 py-1.5 rounded-lg text-gray-300 bg-gray-800/50 
+              className="relative group flex items-center gap-2 px-4 py-1.5 rounded-lg text-gray-300 bg-gray-800/50
                 hover:bg-blue-500/10 border border-gray-800 hover:border-blue-500/50 transition-all duration-300 shadow-lg overflow-hidden"
             >
               <div
-                className="absolute inset-0 bg-gradient-to-r from-blue-500/10 
+                className="absolute inset-0 bg-gradient-to-r from-blue-500/10
                 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity"
               />
               <Code2 className="w-4 h-4 relative z-10 group-hover:rotate-3 transition-transform" />
@@ -69,6 +69,14 @@ async function Header() {
               >
                 Snippets
               </span>
+            </Link>
+            <Link
+              href="/projects"
+              className="relative group flex items-center gap-2 px-4 py-1.5 rounded-lg text-gray-300 bg-gray-800/50 hover:bg-blue-500/10 border border-gray-800 hover:border-blue-500/50 transition-all duration-300 overflow-hidden"
+            >
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+              <Code2 className="w-4 h-4 relative z-10 group-hover:rotate-3 transition-transform" />
+              <span className="text-sm font-medium relative z-10 group-hover:text-white transition-colors">Projects</span>
             </Link>
           </nav>
         </div>
@@ -94,6 +102,14 @@ async function Header() {
           )}
 
           <SignedIn>
+            {convexUser?.isPro && (
+              <Link
+                href="/projects/new"
+                className="inline-flex items-center gap-2 px-4 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white"
+              >
+                New Project
+              </Link>
+            )}
             <RunButton />
           </SignedIn>
 
