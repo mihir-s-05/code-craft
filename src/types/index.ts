@@ -37,6 +37,11 @@ export interface ExecutionResult {
   error: string | null;
 }
 
+export interface EditorFile {
+  name: string;
+  content: string;
+}
+
 export interface CodeEditorState {
   language: string;
   output: string;
@@ -47,8 +52,15 @@ export interface CodeEditorState {
   editor: Monaco | null;
   executionResult: ExecutionResult | null;
 
+  files: EditorFile[];
+  currentFileIndex: number;
+
   setEditor: (editor: Monaco) => void;
   getCode: () => string;
+  setCurrentFileIndex: (index: number) => void;
+  addFile: (name?: string) => void;
+  removeFile: (index: number) => void;
+  updateCurrentFileContent: (content: string) => void;
   setLanguage: (language: string) => void;
   setTheme: (theme: string) => void;
   setFontSize: (fontSize: number) => void;

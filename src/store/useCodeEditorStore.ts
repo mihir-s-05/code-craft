@@ -1,4 +1,4 @@
-import { LANGUAGE_CONFIG } from "@/app/(root)/_constants";
+import { LANGUAGE_CONFIG, LANGUAGE_EXTENSIONS } from "@/app/(root)/_constants";
 import { create } from "zustand";
 import { Monaco } from "@monaco-editor/react";
 import { CodeEditorState } from "@/types";
@@ -8,9 +8,16 @@ const getInitialState = () => {
     // if we're on the server, return default values
     if (typeof window === "undefined") {
         return {
-            language:"javascript",
-            fontSize:16,
-            theme:"vs-dark",
+            language: "javascript",
+            fontSize: 16,
+            theme: "vs-dark",
+            files: [
+                {
+                    name: `main.${LANGUAGE_EXTENSIONS["javascript"]}`,
+                    content: LANGUAGE_CONFIG["javascript"].defaultCode,
+                },
+            ],
+            currentFileIndex: 0,
         }
     }
     // if we're on the client, return values from local storage bc localStorrage is browser API.
@@ -18,10 +25,20 @@ const getInitialState = () => {
     const savedTheme = localStorage.getItem("editor-theme") || "vs-dark";
     const savedFontSize = localStorage.getItem("editor-font-size") || "16";
 
+    const savedFiles = localStorage.getItem(`editor-files-${savedLanguage}`);
+    const files = savedFiles
+        ? JSON.parse(savedFiles)
+        : [{
+            name: `main.${LANGUAGE_EXTENSIONS[savedLanguage]}`,
+            content: LANGUAGE_CONFIG[savedLanguage].defaultCode,
+        }];
+
     return {
         language: savedLanguage,
-        theme:savedTheme,
-        fontSize:Number(savedFontSize),
+        theme: savedTheme,
+        fontSize: Number(savedFontSize),
+        files,
+        currentFileIndex: 0,
     }
 
 }
@@ -36,13 +53,14 @@ export const useCodeEditorStore = create<CodeEditorState>((set, get) => {
         editor:null,
         executionResult:null,
 
-        getCode: () => get().editor?.getValue() || "",
+        getCode: () => get().files[get().currentFileIndex]?.content || "",
+        files: initialState.files,
+        currentFileIndex: initialState.currentFileIndex,
         
         setEditor: (editor: Monaco) => {
-            const savedCode = localStorage.getItem(`editor-code-${get().language}`);
-            if (savedCode) editor.setValue(savedCode);
-
-            set({editor});
+            const { files, currentFileIndex } = get();
+            editor.setValue(files[currentFileIndex].content);
+            set({ editor });
         },
 
         setTheme: (theme: string) => {
@@ -55,27 +73,75 @@ export const useCodeEditorStore = create<CodeEditorState>((set, get) => {
             set({fontSize});
         },
 
-        setLanguage: (language: string) => {
-            // Save current language code before switching
-            const currentCode = get().editor?.getValue();
-            if (currentCode) {
-              localStorage.setItem(`editor-code-${get().language}`, currentCode);
-            }
-      
-            localStorage.setItem("editor-language", language);
-      
-            set({
-              language,
-              output: "",
-              error: null,
-            });
-          },
-          runCode: async () => {
-            const {language, getCode} = get();
-            const code = getCode();
+        setCurrentFileIndex: (index: number) => {
+            const { files } = get();
+            if (index < 0 || index >= files.length) return;
+            set({ currentFileIndex: index });
+            const editor = get().editor;
+            if (editor) editor.setValue(files[index].content);
+        },
 
-            if (!code) {
-                set({error: "Please enter some code"});
+        addFile: (name?: string) => {
+            const { language, files } = get();
+            const extension = LANGUAGE_EXTENSIONS[language];
+            const fileName = name || `file${files.length}.${extension}`;
+            const newFiles = [...files, { name: fileName, content: "" }];
+            localStorage.setItem(`editor-files-${language}`, JSON.stringify(newFiles));
+            set({ files: newFiles, currentFileIndex: newFiles.length - 1 });
+            const editor = get().editor;
+            if (editor) editor.setValue("");
+        },
+
+        removeFile: (index: number) => {
+            const { files, language, currentFileIndex } = get();
+            if (files.length <= 1) return;
+            const newFiles = files.filter((_, i) => i !== index);
+            let newIndex = currentFileIndex;
+            if (index <= currentFileIndex) newIndex = Math.max(0, currentFileIndex - 1);
+            localStorage.setItem(`editor-files-${language}`, JSON.stringify(newFiles));
+            set({ files: newFiles, currentFileIndex: newIndex });
+            const editor = get().editor;
+            if (editor) editor.setValue(newFiles[newIndex].content);
+        },
+
+        updateCurrentFileContent: (content: string) => {
+            const { files, currentFileIndex, language } = get();
+            const newFiles = [...files];
+            newFiles[currentFileIndex] = { ...newFiles[currentFileIndex], content };
+            localStorage.setItem(`editor-files-${language}`, JSON.stringify(newFiles));
+            set({ files: newFiles });
+        },
+
+        setLanguage: (language: string) => {
+            const { language: currentLang, files } = get();
+            localStorage.setItem(`editor-files-${currentLang}`, JSON.stringify(files));
+
+            const saved = localStorage.getItem(`editor-files-${language}`);
+            const newFiles = saved
+                ? JSON.parse(saved)
+                : [{
+                    name: `main.${LANGUAGE_EXTENSIONS[language]}`,
+                    content: LANGUAGE_CONFIG[language].defaultCode,
+                }];
+
+            localStorage.setItem("editor-language", language);
+
+            set({
+                language,
+                files: newFiles,
+                currentFileIndex: 0,
+                output: "",
+                error: null,
+            });
+
+            const editor = get().editor;
+            if (editor) editor.setValue(newFiles[0].content);
+        },
+          runCode: async () => {
+            const { language, files, currentFileIndex } = get();
+            const code = files[currentFileIndex].content;
+            if (files.every((f) => !f.content.trim())) {
+                set({ error: "Please enter some code" });
                 return;
             }
 
@@ -91,8 +157,7 @@ export const useCodeEditorStore = create<CodeEditorState>((set, get) => {
                     body: JSON.stringify({
                         language: runtime.language,
                         version: runtime.version,
-                        files: [{content: code}],
-
+                        files: files.map(f => ({ name: f.name, content: f.content })),
                     })
                 })
 

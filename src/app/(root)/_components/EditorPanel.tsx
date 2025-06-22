@@ -5,7 +5,7 @@ import { defineMonacoThemes, LANGUAGE_CONFIG } from "../_constants";
 import { Editor } from "@monaco-editor/react";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { RotateCcwIcon, ShareIcon, TypeIcon } from "lucide-react";
+import { RotateCcwIcon, ShareIcon, TypeIcon, Plus, X } from "lucide-react";
 import { useClerk, useUser } from "@clerk/nextjs";
 import { EditorPanelSkeleton } from "./EditorPanelSkeleton";
 import useMounted from "@/hooks/useMounted";
@@ -17,16 +17,31 @@ function EditorPanel() {
   const clerk = useClerk();
   const { user } = useUser();
   const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
-  const { language, theme, fontSize, editor, setFontSize, setEditor, runCode, isRunning } = useCodeEditorStore();
+  const {
+    language,
+    theme,
+    fontSize,
+    editor,
+    setFontSize,
+    setEditor,
+    runCode,
+    isRunning,
+    files,
+    currentFileIndex,
+    addFile,
+    removeFile,
+    setCurrentFileIndex,
+    updateCurrentFileContent,
+  } = useCodeEditorStore();
   const saveExecution = useMutation(api.codeExecutions.saveExecution);
 
   const mounted = useMounted();
 
   useEffect(() => {
-    const savedCode = localStorage.getItem(`editor-code-${language}`);
-    const newCode = savedCode || LANGUAGE_CONFIG[language].defaultCode;
-    if (editor) editor.setValue(newCode);
-  }, [language, editor]);
+    if (editor && files.length) {
+      editor.setValue(files[currentFileIndex].content);
+    }
+  }, [language, editor, currentFileIndex, files]);
 
   useEffect(() => {
     const savedFontSize = localStorage.getItem("editor-font-size");
@@ -66,12 +81,12 @@ function EditorPanel() {
 
   const handleRefresh = () => {
     const defaultCode = LANGUAGE_CONFIG[language].defaultCode;
+    updateCurrentFileContent(defaultCode);
     if (editor) editor.setValue(defaultCode);
-    localStorage.removeItem(`editor-code-${language}`);
   };
 
   const handleEditorChange = (value: string | undefined) => {
-    if (value) localStorage.setItem(`editor-code-${language}`, value);
+    if (value !== undefined) updateCurrentFileContent(value);
   };
 
   const handleFontSizeChange = (newSize: number) => {
@@ -137,6 +152,36 @@ function EditorPanel() {
               <span className="text-sm font-medium text-white ">Share</span>
             </motion.button>
           </div>
+        </div>
+
+        {/* File Tabs */}
+        <div className="flex items-center gap-2 mb-2">
+          {files.map((file, idx) => (
+            <div
+              key={idx}
+              onClick={() => setCurrentFileIndex(idx)}
+              className={`flex items-center px-2 py-1 rounded cursor-pointer bg-[#1e1e2e] ring-1 ring-white/5 text-sm ${idx === currentFileIndex ? "text-white" : "text-gray-400"}`}
+            >
+              <span>{file.name}</span>
+              {files.length > 1 && idx !== 0 && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    removeFile(idx);
+                  }}
+                  className="ml-1 text-gray-500 hover:text-white"
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              )}
+            </div>
+          ))}
+          <button
+            onClick={() => addFile()}
+            className="p-1 rounded bg-[#1e1e2e] ring-1 ring-white/5 text-gray-400 hover:text-white"
+          >
+            <Plus className="w-4 h-4" />
+          </button>
         </div>
 
         {/* Editor  */}
