@@ -34,6 +34,17 @@ function EditorPanel() {
     setCurrentFileIndex,
     updateCurrentFileContent,
   } = useCodeEditorStore();
+
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const [editValue, setEditValue] = useState("");
+
+  const submitRename = (index: number) => {
+    const trimmed = editValue.trim();
+    if (trimmed && trimmed !== files[index].name) {
+      renameFile(index, trimmed);
+    }
+    setEditingIndex(null);
+  };
   const saveExecution = useMutation(api.codeExecutions.saveExecution);
 
   const mounted = useMounted();
@@ -159,39 +170,61 @@ function EditorPanel() {
 
         {/* File Tabs */}
         <div className="flex items-center gap-2 mb-2">
-          {files.map((file, idx) => (
-            <div
-              key={idx}
-              onClick={() => setCurrentFileIndex(idx)}
-              className={`flex items-center px-2 py-1 rounded cursor-pointer bg-[#1e1e2e] ring-1 ring-white/5 text-sm ${idx === currentFileIndex ? "text-white" : "text-gray-400"}`}
-            >
-              <span>{file.name}</span>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  const newName = prompt("Rename file", file.name);
-                  if (newName && newName.trim()) {
-                    renameFile(idx, newName.trim());
-                  }
-                }}
-                className="ml-1 text-gray-500 hover:text-white"
-                aria-label="Rename file"
+          {files.map((file, idx) => {
+            const isEditing = editingIndex === idx;
+            return (
+              <div
+                key={idx}
+                onClick={() => setCurrentFileIndex(idx)}
+                className={`flex items-center px-2 py-1 rounded cursor-pointer bg-[#1e1e2e] ring-1 ring-white/5 text-sm ${idx === currentFileIndex ? "text-white" : "text-gray-400"}`}
               >
-                <Pencil className="w-3 h-3" />
-              </button>
-              {files.length > 1 && idx !== 0 && (
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    removeFile(idx);
-                  }}
-                  className="ml-1 text-gray-500 hover:text-white"
-                >
-                  <X className="w-3 h-3" />
-                </button>
-              )}
-            </div>
-          ))}
+                {isEditing ? (
+                  <input
+                    className="bg-transparent border-none focus:outline-none w-24 text-white text-sm"
+                    value={editValue}
+                    onChange={(e) => setEditValue(e.target.value)}
+                    onClick={(e) => e.stopPropagation()}
+                    onBlur={() => submitRename(idx)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        submitRename(idx);
+                      } else if (e.key === "Escape") {
+                        setEditingIndex(null);
+                      }
+                    }}
+                    autoFocus
+                  />
+                ) : (
+                  <>
+                    <span>{file.name}</span>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setEditingIndex(idx);
+                        setEditValue(file.name);
+                      }}
+                      className="ml-1 text-gray-500 hover:text-white"
+                      aria-label="Rename file"
+                    >
+                      <Pencil className="w-3 h-3" />
+                    </button>
+                  </>
+                )}
+                {files.length > 1 && idx !== 0 && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      removeFile(idx);
+                    }}
+                    className="ml-1 text-gray-500 hover:text-white"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                )}
+              </div>
+            );
+          })}
           <button
             onClick={() => addFile()}
             className="p-1 rounded bg-[#1e1e2e] ring-1 ring-white/5 text-gray-400 hover:text-white"
