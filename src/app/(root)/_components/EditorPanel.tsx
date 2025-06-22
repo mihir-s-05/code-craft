@@ -41,7 +41,9 @@ function EditorPanel() {
     if (editor && files.length) {
       editor.setValue(files[currentFileIndex].content);
     }
-  }, [language, editor, currentFileIndex, files]);
+    // we intentionally omit `files` from dependencies to avoid resetting the editor on every keystroke
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [language, editor, currentFileIndex]);
 
   useEffect(() => {
     const savedFontSize = localStorage.getItem("editor-font-size");
