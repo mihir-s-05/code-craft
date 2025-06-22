@@ -1,6 +1,19 @@
 import { Monaco } from "@monaco-editor/react";
 import { Theme } from "../../../types";
 
+export const LANGUAGE_EXTENSIONS: Record<string, string> = {
+  javascript: "js",
+  typescript: "ts",
+  python: "py",
+  java: "java",
+  go: "go",
+  rust: "rs",
+  cpp: "cpp",
+  csharp: "cs",
+  ruby: "rb",
+  swift: "swift",
+};
+
 type LanguageConfig = Record<
   string,
   {
