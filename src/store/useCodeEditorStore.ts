@@ -104,6 +104,15 @@ export const useCodeEditorStore = create<CodeEditorState>((set, get) => {
             if (editor) editor.setValue(newFiles[newIndex].content);
         },
 
+        renameFile: (index: number, newName: string) => {
+            const { files, language } = get();
+            if (index < 0 || index >= files.length) return;
+            const newFiles = [...files];
+            newFiles[index] = { ...newFiles[index], name: newName };
+            localStorage.setItem(`editor-files-${language}`, JSON.stringify(newFiles));
+            set({ files: newFiles });
+        },
+
         updateCurrentFileContent: (content: string) => {
             const { files, currentFileIndex, language } = get();
             const newFiles = [...files];

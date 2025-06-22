@@ -5,7 +5,7 @@ import { defineMonacoThemes, LANGUAGE_CONFIG } from "../_constants";
 import { Editor } from "@monaco-editor/react";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { RotateCcwIcon, ShareIcon, TypeIcon, Plus, X } from "lucide-react";
+import { RotateCcwIcon, ShareIcon, TypeIcon, Plus, X, Pencil } from "lucide-react";
 import { useClerk, useUser } from "@clerk/nextjs";
 import { EditorPanelSkeleton } from "./EditorPanelSkeleton";
 import useMounted from "@/hooks/useMounted";
@@ -30,6 +30,7 @@ function EditorPanel() {
     currentFileIndex,
     addFile,
     removeFile,
+    renameFile,
     setCurrentFileIndex,
     updateCurrentFileContent,
   } = useCodeEditorStore();
@@ -165,6 +166,19 @@ function EditorPanel() {
               className={`flex items-center px-2 py-1 rounded cursor-pointer bg-[#1e1e2e] ring-1 ring-white/5 text-sm ${idx === currentFileIndex ? "text-white" : "text-gray-400"}`}
             >
               <span>{file.name}</span>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  const newName = prompt("Rename file", file.name);
+                  if (newName && newName.trim()) {
+                    renameFile(idx, newName.trim());
+                  }
+                }}
+                className="ml-1 text-gray-500 hover:text-white"
+                aria-label="Rename file"
+              >
+                <Pencil className="w-3 h-3" />
+              </button>
               {files.length > 1 && idx !== 0 && (
                 <button
                   onClick={(e) => {

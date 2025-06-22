@@ -60,6 +60,7 @@ export interface CodeEditorState {
   setCurrentFileIndex: (index: number) => void;
   addFile: (name?: string) => void;
   removeFile: (index: number) => void;
+  renameFile: (index: number, newName: string) => void;
   updateCurrentFileContent: (content: string) => void;
   setLanguage: (language: string) => void;
   setTheme: (theme: string) => void;
